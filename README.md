@@ -37,7 +37,8 @@ docker-compose up -d --build
 
 Aguarde a criação da imagem, após a execução do build, você pode acessar a aplicaçao node através do endereço:
 
-[http://localhost:3001/]([http://localhost:3001/)
+[http://localhost/]([http://localhost/)
+
 
 Você verá a mensagem "Full Cycle Rocks!!" impressa, uma tabela dos ítens previamente cadastrados e um link "Adicionar novo". Clique no link para adicionar automaticamente novos itens.
 
