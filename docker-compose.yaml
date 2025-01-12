@@ -1,0 +1,69 @@
+services:
+  app:
+    build:
+      context: ./node
+      dockerfile: Dockerfile
+    image: phramos/full-cycle-rocks-desafio-nginx-node
+    container_name: app
+    entrypoint: ["dockerize", "-wait", "tcp://db:3306", "-timeout", "50s", "node", "index.js"]
+    networks:
+      - node-network
+    volumes:
+      - ./node:/usr/src/app
+      - ./.env:/usr/src/app/.env
+    tty: true
+    ports:
+      - "3001:3001"
+  db: 
+    image: mysql:5.7
+    command: 
+      - --ssl-cipher=TLSv1.2
+      - --tls-version=TLSv1.2,TLSv1.3
+      - --innodb-use-native-aio=0
+      - --default-authentication-plugin=mysql_native_password
+      - --explicit_defaults_for_timestamp=1
+      - --pid-file=/var/run/mysql/mysqld.pid
+      - --gtid-mode=ON
+      - --enforce-gtid-consistency
+    container_name: db
+    restart: always
+    tty: true
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - node-network
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    container_name: phpmyadmin
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: ${MYSQL_HOST}
+      PMA_USER: ${MYSQL_USER} 
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "8080:80"
+    networks:
+      - node-network
+    volumes: 
+      - ./certs:/certs:ro 
+      - ./certs/config.secret.inc.php:/etc/phpmyadmin/config.secret.inc.php:ro
+    user: "33:33"
+
+networks:
+  node-network:
+    driver: bridge  
+
+volumes:
+  mysql:
+  node:
+
