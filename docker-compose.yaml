@@ -10,6 +10,7 @@ services:
       - node-network
     volumes:
       - ./.env:/usr/src/app/.env
+      - ./node:/usr/src/app
     tty: true
     ports:
       - "3001:3001"
