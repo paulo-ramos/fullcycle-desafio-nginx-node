@@ -26,7 +26,7 @@ services:
       - --pid-file=/var/run/mysql/mysqld.pid
       - --gtid-mode=ON
       - --enforce-gtid-consistency
-    container_name: db
+    container_name: ${MYSQL_HOST}
     restart: always
     tty: true
     ports:
